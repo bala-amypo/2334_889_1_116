@@ -1,7 +1,9 @@
-// package com.example.demo.repository;
+package com.example.project.repository;
 
-// import com.example.demo.entity.*;
-// import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.project.entity.PenaltyCalculation;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-
-// public interface PenaltyCalculationRepository extends JpaRepository<PenaltyCalculation, Long> {}
+@Repository
+public interface PenaltyCalculationRepository extends JpaRepository<PenaltyCalculation, Long> {
+}
