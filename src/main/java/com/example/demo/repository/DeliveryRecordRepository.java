@@ -1,9 +1,10 @@
-// package com.example.demo.repository;
+package com.example.project.repository;
 
-// import com.example.demo.entity.*;
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import java.util.Optional;
+import com.example.project.entity.DeliveryRecord;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-// public interface DeliveryRecordRepository extends JpaRepository<DeliveryRecord, Long> {
-//     Optional<DeliveryRecord> findTopByContractIdOrderByDeliveryDateDesc(Long contractId);
-// }
+@Repository
+public interface DeliveryRecordRepository extends JpaRepository<DeliveryRecord, Long> {
+    // You can add custom queries if needed
+}
