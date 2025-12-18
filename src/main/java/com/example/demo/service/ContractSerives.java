@@ -1,31 +1,35 @@
-package com.example.project.controller;
+package com.example.project.service;
 
-import java.util.List;
+import java.util.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
 import com.example.project.entity.Contract;
-import com.example.project.service.ContractServies;
 
-@RestController
-public class ContractController {
-    @Autowired
-    ContractServies src;
-    @PostMapping("/post")
-    public Contract postdata(@RequestBody Contract ct){
-        return src.savedata(ct);
+@Service
+public class ContractServices {
+
+    private Map<Long, Contract> mp = new HashMap<>();
+
+    public Contract saveData(Contract ct) {
+        mp.put(ct.getId(), ct);
+        return ct;
     }
-    @GetMapping("/get")
-    public List<Contract>getdata(){
-        return src.retdata();
+
+    public List<Contract> getAllData() {
+        return new ArrayList<>(mp.values());
     }
-    @GetMapping("/get/{id")
-    public Contract updata(@PathVariable int id){
-        return src.id(id);
+
+    public Contract getById(Long id) {
+        return mp.get(id);
+    }
+
+    public Contract updateData(Long id, Contract data) {
+        mp.put(id, data);
+        return data;
+    }
+
+    public void deleteData(Long id) {
+        mp.remove(id);
     }
 }
