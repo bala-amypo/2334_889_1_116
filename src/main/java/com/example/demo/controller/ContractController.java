@@ -1,10 +1,8 @@
 package com.example.project.controller;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import com.example.project.entity.Contract;
 import com.example.project.service.ContractServices;
 
