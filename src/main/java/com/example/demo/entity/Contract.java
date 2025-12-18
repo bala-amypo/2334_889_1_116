@@ -5,9 +5,9 @@ public class Contract {
     private Long id;
     private String contractNumber;
     private String title;
-    private String counterpartyName;
-    private Date agreedDeliveryDate;
-    private BigDecimal baseContractValue;
+    // private String counterpartyName;
+    // private Date agreedDeliveryDate;
+    // private BigDecimal baseContractValue;
 
     public Contract() {}
 
