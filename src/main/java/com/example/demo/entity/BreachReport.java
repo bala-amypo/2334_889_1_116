@@ -1,19 +1,20 @@
 package com.example.demo.entity;
 
-public class BreacchReport{
+public class BreachReport {
 
     private Long id;
     private int daysDelayed;
-    // private BigDecimal penaltyAmount;
     private String remark;
 
-    public BreachReport(){
+    public BreachReport() {
     }
-    public BreachReport(Long id,int daysDelayed,String remark){
-        this.id=id;
-        this.daysDelayed=daysDelayed;
-        this.remark=remark;
+
+    public BreachReport(Long id, int daysDelayed, String remark) {
+        this.id = id;
+        this.daysDelayed = daysDelayed;
+        this.remark = remark;
     }
+
     public Long getId() {
         return id;
     }
@@ -22,7 +23,7 @@ public class BreacchReport{
         return daysDelayed;
     }
 
-    public String remark() {
+    public String getRemark() {
         return remark;
     }
 
@@ -30,11 +31,11 @@ public class BreacchReport{
         this.id = id;
     }
 
-    public void setDaysDelayed(String daysDelayed) {
+    public void setDaysDelayed(int daysDelayed) {
         this.daysDelayed = daysDelayed;
     }
 
-    public void remark(String remark) {
+    public void setRemark(String remark) {
         this.remark = remark;
     }
 }
