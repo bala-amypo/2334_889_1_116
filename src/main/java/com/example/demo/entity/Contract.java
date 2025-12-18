@@ -5,6 +5,7 @@ public class Contract {
     private Long id;
     private String contractNumber;
     private String title;
+    private 
 
     public Contract() {}
 
