@@ -1,36 +1,17 @@
 package com.example.demo.service;
 
-import java.util.*;
-
-import org.springframework.stereotype.Service;
-
+import java.util.List;
 import com.example.demo.entity.BreachReport;
 
-@Service
-public class BreachReportService {
+public interface BreachReportService {
 
-    private Map<Long, BreachReport> mp = new HashMap<>();
+    BreachReport saveData(BreachReport br);
 
-    public BreachReport saveData(BreachReport br) {
-        mp.put(br.getId(), br);
-        return br;
-    }
+    List<BreachReport> getAllData();
 
-    public List<BreachReport> getAllData() {
-        return new ArrayList<>(mp.values());
-    }
+    BreachReport getById(Long id);
 
-    public BreachReport getById(Long id) {
-        return mp.get(id);
-    }
+    BreachReport updateData(Long id, BreachReport br);
 
-    public BreachReport updateData(Long id, BreachReport data) {
-        mp.put(id, data);
-        return data;
-    }
-
-    // DELETE
-    public void deleteData(Long id) {
-        mp.remove(id);
-    }
+    void deleteData(Long id);
 }
