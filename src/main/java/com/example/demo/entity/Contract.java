@@ -1,15 +1,22 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Contract {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String contractNumber;
-    private String title;
-    // private String counterpartyName;
-    // private Date agreedDeliveryDate;
-    // private BigDecimal baseContractValue;
 
-    public Contract() {}
+    @Column(nullable = false, unique = true)
+    private String contractNumber;
+
+    @Column(nullable = false)
+    private String title;
+
+    public Contract() {
+    }
 
     public Contract(Long id, String contractNumber, String title) {
         this.id = id;
