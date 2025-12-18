@@ -1,7 +1,7 @@
-package com.example.project.service;
+package com.example.demo.service;
 
-import com.example.project.entity.PenaltyCalculation;
-import com.example.project.repository.PenaltyCalculationRepository;
+import com.example.demo.entity.PenaltyCalculation;
+import com.example.demo.repository.PenaltyCalculationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

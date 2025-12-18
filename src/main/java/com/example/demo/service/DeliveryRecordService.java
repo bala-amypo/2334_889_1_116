@@ -1,6 +1,6 @@
-package com.example.project.service;
+package com.example.demo.service;
 
-import com.example.project.entity.DeliveryRecord;
+import com.example.demo.entity.DeliveryRecord;
 import java.util.List;
 
 public interface DeliveryRecordService {

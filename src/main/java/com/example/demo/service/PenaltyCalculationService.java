@@ -1,6 +1,6 @@
 package com.example.project.service;
 
-import com.example.project.entity.PenaltyCalculation;
+import com.example.demo.entity.PenaltyCalculation;
 import java.util.List;
 
 public interface PenaltyCalculationService {

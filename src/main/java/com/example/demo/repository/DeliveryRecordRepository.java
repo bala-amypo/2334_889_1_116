@@ -1,4 +1,4 @@
-package com.example.project.repository;
+package com.example.demo.repository;
 
 import com.example.project.entity.DeliveryRecord;
 import org.springframework.data.jpa.repository.JpaRepository;

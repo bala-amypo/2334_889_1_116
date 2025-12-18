@@ -1,7 +1,7 @@
-package com.example.project.service;
+package com.example.demo.service;
 
-import com.example.project.entity.DeliveryRecord;
-import com.example.project.repository.DeliveryRecordRepository;
+import com.example.demo.entity.DeliveryRecord;
+import com.example.demo.repository.DeliveryRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
