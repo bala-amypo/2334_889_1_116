@@ -1,7 +1,7 @@
-package com.example.project.controller;
+package com.example.demo.controller;
 
-import com.example.project.entity.PenaltyCalculation;
-import com.example.project.service.PenaltyCalculationService;
+import com.example.demo.entity.PenaltyCalculation;
+import com.example.demo.service.PenaltyCalculationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,7 +1,7 @@
-package com.example.project.controller;
+package com.example.demo.controller;
 
-import com.example.project.entity.DeliveryRecord;
-import com.example.project.service.DeliveryRecordService;
+import com.example.demo.entity.DeliveryRecord;
+import com.example.demo.service.DeliveryRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
