@@ -6,16 +6,14 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.Contract;
 
 @Service
-public class ContractServices {
-
-    private Map<Long, Contract> mp = new HashMap<>();
-
-    public Contract saveData(Contract ct) {
-        mp.put(ct.getId(), ct);
-        return ct;
+public class BreachReportService {
+    private Map<Long, BreachReport> mp = new HashMap<>();
+    public BreachReport saveData(BreachReport br) {
+        mp.put(br.getId(), br);
+        return br;
     }
 
-    public List<Contract> getAllData() {
+    public List<BreachReport> getAllData() {
         return new ArrayList<>(mp.values());
     }
 
