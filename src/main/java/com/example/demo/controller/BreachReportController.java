@@ -10,5 +10,10 @@ import com.example.demo.service.BreachReportService;
 @RequestMapping("/BreachReport")
 public class BreachReportController {
     @Autowired
-    private
+    private BreachReportService src;
+    @postMapping("/post")
+    public BreachReport postData(@RequestBody BreachReport br) {
+        return src.saveData(br);
+    }
+    @
 }
