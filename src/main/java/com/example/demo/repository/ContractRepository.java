@@ -1,9 +1,10 @@
-// package com.example.demo.repository;
+package com.example.demo.repository;
 
-// import com.example.demo.entity.*;
-// import org.springframework.data.jpa.repository.JpaRepository;
-// import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-// public interface ContractRepository extends JpaRepository<Contract, Long> {
-//     Optional<Contract> findByContractNumber(String contractNumber);
-// }
+import com.example.demo.entity.Contract;
+
+@Repository
+public interface ContractRepository extends JpaRepository<Contract, Long> {
+}

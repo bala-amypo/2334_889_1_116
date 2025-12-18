@@ -1,35 +1,17 @@
 package com.example.demo.service;
 
-import java.util.*;
-
-import org.springframework.stereotype.Service;
+import java.util.List;
 import com.example.demo.entity.Contract;
 
-@Service
-public class ContractServices {
+public interface ContractService {
 
-    private Map<Long, Contract> mp = new HashMap<>();
+    Contract save(Contract contract);
 
-    public Contract saveData(Contract ct) {
-        mp.put(ct.getId(), ct);
-        return ct;
-    }
+    List<Contract> findAll();
 
-    public List<Contract> getAllData() {
-        return new ArrayList<>(mp.values());
-    }
+    Contract findById(Long id);
 
-    public Contract getById(Long id) {
-        return mp.get(id);
-    }
+    Contract update(Long id, Contract contract);
 
-    public Contract updateData(Long id, Contract data) {
-        mp.put(id, data);
-        return data;
-    }
-
-
-    public void deleteData(Long id) {
-        mp.remove(id);
-    }
+    void delete(Long id);
 }

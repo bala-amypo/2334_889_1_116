@@ -1,39 +1,45 @@
 package com.example.demo.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import com.example.demo.entity.Contract;
-import com.example.demo.service.ContractServices;
+import com.example.demo.service.ContractService;
 
 @RestController
 @RequestMapping("/contract")
 public class ContractController {
 
     @Autowired
-    private ContractServices service;
+    private ContractService service;
+
     @PostMapping("/post")
-    public Contract postData(@RequestBody Contract ct) {
-        return service.saveData(ct);
+    public Contract create(@RequestBody Contract contract) {
+        return service.save(contract);
     }
+
     @GetMapping("/get")
-    public List<Contract> getAllData() {
-        return service.getAllData();
+    public List<Contract> getAll() {
+        return service.findAll();
     }
 
     @GetMapping("/get/{id}")
     public Contract getById(@PathVariable Long id) {
-        return service.getById(id);
+        return service.findById(id);
     }
 
     @PutMapping("/update/{id}")
-    public Contract updateData(@PathVariable Long id, @RequestBody Contract ct) {
-        return service.updateData(id, ct);
+    public Contract update(
+            @PathVariable Long id,
+            @RequestBody Contract contract) {
+        return service.update(id, contract);
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteData(@PathVariable Long id) {
-        service.deleteData(id);
+    public String delete(@PathVariable Long id) {
+        service.delete(id);
         return "Contract with ID " + id + " deleted successfully!";
     }
 }

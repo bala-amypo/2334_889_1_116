@@ -8,11 +8,8 @@ public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String contractNumber;
-
-    @Column(nullable = false)
     private String title;
 
     public Contract() {
