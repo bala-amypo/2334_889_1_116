@@ -17,15 +17,14 @@ public class BreachReportService {
         return new ArrayList<>(mp.values());
     }
 
-    public Contract getById(Long id) {
+    public BreachReport getById(Long id) {
         return mp.get(id);
     }
 
-    public Contract updateData(Long id, Contract data) {
+    public BreachReport updateData(Long id, BreachReport data) {
         mp.put(id, data);
         return data;
     }
-
 
     public void deleteData(Long id) {
         mp.remove(id);
