@@ -3,11 +3,14 @@ package com.example.demo.service;
 import java.util.*;
 
 import org.springframework.stereotype.Service;
-import com.example.demo.entity.Contract;
+
+import com.example.demo.entity.BreachReport;
 
 @Service
 public class BreachReportService {
+
     private Map<Long, BreachReport> mp = new HashMap<>();
+
     public BreachReport saveData(BreachReport br) {
         mp.put(br.getId(), br);
         return br;
@@ -26,6 +29,7 @@ public class BreachReportService {
         return data;
     }
 
+    // DELETE
     public void deleteData(Long id) {
         mp.remove(id);
     }
