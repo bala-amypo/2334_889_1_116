@@ -1,9 +1,9 @@
-package com.example.project.service;
+package com.example.demo.service;
 
 import java.util.*;
 
 import org.springframework.stereotype.Service;
-import com.example.project.entity.Contract;
+import com.example.demo.entity.Contract;
 
 @Service
 public class ContractServices {
