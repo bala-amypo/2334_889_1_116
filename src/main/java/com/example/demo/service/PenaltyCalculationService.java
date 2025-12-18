@@ -1,4 +1,4 @@
-package com.example.project.service;
+package com.example.demo.service;
 
 import com.example.demo.entity.PenaltyCalculation;
 import java.util.List;
