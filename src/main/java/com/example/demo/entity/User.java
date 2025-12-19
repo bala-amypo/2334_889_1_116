@@ -20,7 +20,6 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    // Constructors
     public User() {}
 
     public User(String email, String password, LocalDateTime createdAt) {
@@ -29,7 +28,6 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    // Getters & Setters
     public Long getId() {
         return id;
     }
