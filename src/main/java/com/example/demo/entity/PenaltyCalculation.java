@@ -1,6 +1,8 @@
 package com.example.demo.entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 
-import jakarta.persistence.*;
 
 @Entity
 public class PenaltyCalculation {
