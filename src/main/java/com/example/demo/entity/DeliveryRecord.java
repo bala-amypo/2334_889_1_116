@@ -5,10 +5,20 @@ import java.util.Date;
 
 @Entity
 public class DeliveryRecord {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
     private Contract contract;
+
+    @Temporal(TemporalType.DATE)
     private Date deliveryDate;
+
     private String notes;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     public DeliveryRecord() {
@@ -20,43 +30,23 @@ public class DeliveryRecord {
         this.deliveryDate = deliveryDate;
     }
 
+    @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();
     }
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    // getters and setters...
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Contract getContract() {
-        return contract;
-    }
+    public Contract getContract() { return contract; }
+    public void setContract(Contract contract) { this.contract = contract; }
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
-    }
+    public Date getDeliveryDate() { return deliveryDate; }
+    public void setDeliveryDate(Date deliveryDate) { this.deliveryDate = deliveryDate; }
 
-    public Date getDeliveryDate() {
-        return deliveryDate;
-    }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
-    public void setDeliveryDate(Date deliveryDate) {
-        this.deliveryDate = deliveryDate;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
+    public Date getCreatedAt() { return createdAt; }
 }

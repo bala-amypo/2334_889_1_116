@@ -1,15 +1,24 @@
 package com.example.demo.entity;
+
+import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class PenaltyCalculation {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
     private Contract contract;
+
     private Integer daysDelayed;
+
+    @ManyToOne
     private BreachRule appliedRule;
 
     public PenaltyCalculation() {
@@ -21,6 +30,7 @@ public class PenaltyCalculation {
         this.daysDelayed = daysDelayed;
         this.appliedRule = appliedRule;
     }
+
     public Long getId() {
         return id;
     }
