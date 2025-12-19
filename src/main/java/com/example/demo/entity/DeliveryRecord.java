@@ -5,6 +5,7 @@ import java.util.Date;
 
 @Entity
 public class DeliveryRecord {
+    @Id
     private Long id;
     private Contract contract;
     private Date deliveryDate;
