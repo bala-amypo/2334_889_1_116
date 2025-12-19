@@ -5,7 +5,6 @@ import java.util.Date;
 
 @Entity
 public class DeliveryRecord {
-    @Id
     private Long id;
     private Contract contract;
     private Date deliveryDate;
@@ -21,7 +20,6 @@ public class DeliveryRecord {
         this.deliveryDate = deliveryDate;
     }
 
-    @PrePersist
     protected void onCreate() {
         this.createdAt = new Date();
     }
