@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.Contract;
 import com.example.demo.service.ContractService;
 
-@Table(name="")
-
 @RestController
 @RequestMapping("/contract")
 public class ContractController {
