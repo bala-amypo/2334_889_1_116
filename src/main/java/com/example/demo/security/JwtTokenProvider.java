@@ -1,37 +1,42 @@
 package com.example.demo.security;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
 
+import java.security.Key;
+import java.util.Date;
+
+@Component
 public class JwtTokenProvider {
 
-    private String jwtSecret;
-    private Long jwtExpirationMs;
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long expirationMs = 86400000;
 
-    public String generateToken(Long userId, String email, Set<String> roles) {
-        return Base64.getEncoder()
-                .encodeToString((userId + "|" + email + "|" + String.join(",", roles)).getBytes());
+    public String generateToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(key)
+                .compact();
+    }
+
+    public String getUsernameFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateToken(String token) {
         try {
-            Base64.getDecoder().decode(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (Exception e) {
+        } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
-    }
-
-    public Map<String, Object> getClaims(String token) {
-        String decoded = new String(Base64.getDecoder().decode(token));
-        String[] parts = decoded.split("\\|");
-
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", parts[0]);
-        claims.put("email", parts[1]);
-        claims.put("roles", parts.length > 2 ? parts[2] : "");
-        return claims;
     }
 }
