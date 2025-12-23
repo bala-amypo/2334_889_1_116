@@ -1,23 +1,17 @@
 package com.example.demo.dto;
 
-public class ContractDto {
+import lombok.Data;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+@Data
+public class ContractDto {
+    private Long id;
     private String contractNumber;
     private String title;
-
-    public String getContractNumber() {
-        return contractNumber;
-    }
-
-    public void setContractNumber(String contractNumber) {
-        this.contractNumber = contractNumber;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    private String counterpartyName;
+    private LocalDate agreedDeliveryDate;
+    private BigDecimal baseContractValue;
+    private String status;
 }
