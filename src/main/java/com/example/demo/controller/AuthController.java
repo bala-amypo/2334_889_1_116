@@ -1,34 +1,35 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.User;
 import com.example.demo.security.JwtTokenProvider;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.Authentication;
+import com.example.demo.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationManager authManager;
-    private final JwtTokenProvider tokenProvider;
+    @Autowired
+    private UserService userService;
 
-    public AuthController(AuthenticationManager authManager,
-                          JwtTokenProvider tokenProvider) {
-        this.authManager = authManager;
-        this.tokenProvider = tokenProvider;
-    }
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Map<String, String> req) {
+    public String login(@RequestBody User user) {
+        // fetch user from DB
+        User existingUser = userService.getUserById(user.getId()); // or by email
 
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        req.get("email"), req.get("password"))
+        // generate token with correct parameters
+        Set<String> roles = existingUser.getRoles(); // assuming Set<String>
+        String token = jwtTokenProvider.generateToken(
+                existingUser.getId(),    // Long
+                existingUser.getEmail(), // String
+                roles                    // Set<String>
         );
 
-        String token = tokenProvider.generateToken(authentication.getName());
-        return Map.of("token", token);
+        return token;
     }
 }
