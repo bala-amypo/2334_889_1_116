@@ -25,10 +25,11 @@ public class AuthController {
         // generate token with correct parameters
         Set<String> roles = existingUser.getRoles(); // assuming Set<String>
         String token = jwtTokenProvider.generateToken(
-            user.getId(), 
-            user.getEmail(), 
-            user.getRoles().stream().map(Role::getName).collect(Collectors.toSet())
+                existingUser.getId(),    // Long
+                existingUser.getEmail(), // String
+                roles                    // Set<String>
         );
+
         return token;
     }
 }
