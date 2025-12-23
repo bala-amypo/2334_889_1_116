@@ -1,43 +1,3 @@
-// package com.example.demo.service;
-
-// import java.util.*;
-// import org.springframework.stereotype.Service;
-// import com.example.demo.entity.BreachRule;
-
-// @Service
-// public class BreachRuleServiceImpl implements BreachRuleService {
-
-//     private final Map<Long, BreachRule> store = new HashMap<>();
-
-//     @Override
-//     public BreachRule save(BreachRule rule) {
-//         store.put(rule.getId(), rule);
-//         return rule;
-//     }
-
-//     @Override
-//     public List<BreachRule> findAll() {
-//         return new ArrayList<>(store.values());
-//     }
-
-//     @Override
-//     public BreachRule findById(Long id) {
-//         return store.get(id);
-//     }
-
-//     @Override
-//     public BreachRule update(Long id, BreachRule rule) {
-//         rule.setId(id);
-//         store.put(id, rule);
-//         return rule;
-//     }
-
-//     @Override
-//     public void delete(Long id) {
-//         store.remove(id);
-//     }
-// }
-
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.BreachRule;
@@ -54,12 +14,14 @@ public class BreachRuleServiceImpl implements BreachRuleService {
     private BreachRuleRepository breachRuleRepository;
 
     @Override
-    public BreachRule createRule(BreachRule r) {
-        if (r.getPenaltyPerDay().compareTo(BigDecimal.ZERO) <= 0 ||
-                r.getMaxPenaltyPercentage() > 100) {
-            throw new IllegalArgumentException("Invalid breach rule");
+    public BreachRule createRule(BreachRule rule) {
+        if (rule.getPenaltyPerDay().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Penalty per day must be > 0");
         }
-        return breachRuleRepository.save(r);
+        if (rule.getMaxPenaltyPercentage() != null && (rule.getMaxPenaltyPercentage() < 0 || rule.getMaxPenaltyPercentage() > 100)) {
+            throw new IllegalArgumentException("Max penalty percentage must be between 0 and 100");
+        }
+        return breachRuleRepository.save(rule);
     }
 
     @Override
@@ -72,8 +34,7 @@ public class BreachRuleServiceImpl implements BreachRuleService {
 
     @Override
     public BreachRule getActiveDefaultOrFirst() {
-        return breachRuleRepository
-                .findFirstByActiveTrueOrderByIsDefaultRuleDesc()
+        return breachRuleRepository.findFirstByActiveTrueOrderByIsDefaultRuleDesc()
                 .orElseThrow(() -> new RuntimeException("No active breach rule"));
     }
 

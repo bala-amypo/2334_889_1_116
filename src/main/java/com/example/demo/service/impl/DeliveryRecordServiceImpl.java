@@ -1,55 +1,6 @@
-// package com.example.demo.service;
-
-// import com.example.demo.entity.DeliveryRecord;
-// import com.example.demo.repository.DeliveryRecordRepository;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
-
-// import java.util.List;
-
-// @Service
-// public class DeliveryRecordServiceImpl implements DeliveryRecordService {
-
-//     private final DeliveryRecordRepository repository;
-
-//     @Autowired
-//     public DeliveryRecordServiceImpl(DeliveryRecordRepository repository) {
-//         this.repository = repository;
-//     }
-
-//     @Override
-//     public DeliveryRecord save(DeliveryRecord deliveryRecord) {
-//         return repository.save(deliveryRecord);
-//     }
-
-//     @Override
-//     public List<DeliveryRecord> findAll() {
-//         return repository.findAll();
-//     }
-
-//     @Override
-//     public DeliveryRecord findById(Long id) {
-//         return repository.findById(id)
-//                 .orElseThrow(() -> new RuntimeException("DeliveryRecord not found with id " + id));
-//     }
-
-//     @Override
-//     public DeliveryRecord update(Long id, DeliveryRecord deliveryRecord) {
-//         DeliveryRecord existing = findById(id);
-//         existing.setContract(deliveryRecord.getContract());
-//         existing.setDeliveryDate(deliveryRecord.getDeliveryDate());
-//         existing.setNotes(deliveryRecord.getNotes());
-//         return repository.save(existing);
-//     }
-
-//     @Override
-//     public void delete(Long id) {
-//         repository.deleteById(id);
-//     }
-// }
-
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.Contract;
 import com.example.demo.entity.DeliveryRecord;
 import com.example.demo.repository.ContractRepository;
 import com.example.demo.repository.DeliveryRecordRepository;
@@ -66,21 +17,19 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     private ContractRepository contractRepository;
 
     @Override
-    public DeliveryRecord createDeliveryRecord(DeliveryRecord r) {
-        if (r.getDeliveryDate().isAfter(LocalDate.now())) {
+    public DeliveryRecord createDeliveryRecord(DeliveryRecord record) {
+        if (record.getDeliveryDate().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Delivery date cannot be in the future");
         }
-
-        contractRepository.findById(r.getContract().getId())
+        Contract c = contractRepository.findById(record.getContract().getId())
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
-
-        return deliveryRecordRepository.save(r);
+        record.setContract(c);
+        return deliveryRecordRepository.save(record);
     }
 
     @Override
     public DeliveryRecord getLatestDeliveryRecord(Long contractId) {
-        return deliveryRecordRepository
-                .findFirstByContractIdOrderByDeliveryDateDesc(contractId)
+        return deliveryRecordRepository.findFirstByContractIdOrderByDeliveryDateDesc(contractId)
                 .orElseThrow(() -> new RuntimeException("No delivery records found"));
     }
 
