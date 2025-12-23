@@ -1,17 +1,34 @@
+// package com.example.demo.service;
+
+// import java.util.List;
+// import com.example.demo.entity.Contract;
+
+// public interface ContractService {
+
+//     Contract save(Contract contract);
+
+//     List<Contract> findAll();
+
+//     Contract findById(Long id);
+
+//     Contract update(Long id, Contract contract);
+
+//     void delete(Long id);
+// }
+
 package com.example.demo.service;
 
-import java.util.List;
 import com.example.demo.entity.Contract;
+
+import java.util.List;
 
 public interface ContractService {
 
-    Contract save(Contract contract);
+    Contract createContract(Contract contract);
 
-    List<Contract> findAll();
+    Contract getContractById(Long id);
 
-    Contract findById(Long id);
+    Contract updateContract(Long id, Contract contract);
 
-    Contract update(Long id, Contract contract);
-
-    void delete(Long id);
+    List<Contract> getAllContracts();
 }
