@@ -1,47 +1,37 @@
 package com.example.demo.security;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import java.security.Key;
-import java.util.Date;
-
-@Component
 public class JwtTokenProvider {
 
-    private static final String SECRET = "mysecretkeymysecretkeymysecretkey12";
-    private static final long EXPIRATION = 86400000; // 1 day
+    private String jwtSecret;
+    private Long jwtExpirationMs;
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
-
-    public String generateToken(String username) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + EXPIRATION);
-
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-    }
-
-    public String getUsernameFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+    public String generateToken(Long userId, String email, Set<String> roles) {
+        return Base64.getEncoder()
+                .encodeToString((userId + "|" + email + "|" + String.join(",", roles)).getBytes());
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Base64.getDecoder().decode(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (Exception e) {
             return false;
         }
+    }
+
+    public Map<String, Object> getClaims(String token) {
+        String decoded = new String(Base64.getDecoder().decode(token));
+        String[] parts = decoded.split("\\|");
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", parts[0]);
+        claims.put("email", parts[1]);
+        claims.put("roles", parts.length > 2 ? parts[2] : "");
+        return claims;
     }
 }
