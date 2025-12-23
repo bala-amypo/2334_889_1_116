@@ -24,15 +24,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
-        UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getEmail());
-            builder.password(user.getPassword());
-            builder.authorities(user.getRoles().stream().map(Role::getName).toArray(String[]::new));
-            return builder.build();
-
-        // return org.springframework.security.core.userdetails.User.builder()
-        //         .username(user.getEmail())
-        //         .password(user.getPassword())
-        //         .authorities(authorities) // now correct
-        //         .build();
+    
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .authorities(authorities) // now correct
+                .build();
     }
 }
