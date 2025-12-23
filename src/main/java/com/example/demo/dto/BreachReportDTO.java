@@ -3,15 +3,15 @@ package com.example.demo.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class PenaltyCalculationDTO {
+public class BreachReportDTO {
 
     private Long id;
     private Long contractId;
     private Integer daysDelayed;
-    private BigDecimal calculatedPenalty;
-    private LocalDateTime calculatedAt;
+    private BigDecimal penaltyAmount;
+    private LocalDateTime generatedAt;
 
-    public PenaltyCalculationDTO() {}
+    public BreachReportDTO() {}
 
     public Long getId() {
         return id;
@@ -37,19 +37,19 @@ public class PenaltyCalculationDTO {
         this.daysDelayed = daysDelayed;
     }
 
-    public BigDecimal getCalculatedPenalty() {
-        return calculatedPenalty;
+    public BigDecimal getPenaltyAmount() {
+        return penaltyAmount;
     }
 
-    public void setCalculatedPenalty(BigDecimal calculatedPenalty) {
-        this.calculatedPenalty = calculatedPenalty;
+    public void setPenaltyAmount(BigDecimal penaltyAmount) {
+        this.penaltyAmount = penaltyAmount;
     }
 
-    public LocalDateTime getCalculatedAt() {
-        return calculatedAt;
+    public LocalDateTime getGeneratedAt() {
+        return generatedAt;
     }
 
-    public void setCalculatedAt(LocalDateTime calculatedAt) {
-        this.calculatedAt = calculatedAt;
+    public void setGeneratedAt(LocalDateTime generatedAt) {
+        this.generatedAt = generatedAt;
     }
 }
