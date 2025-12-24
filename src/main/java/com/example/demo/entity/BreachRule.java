@@ -5,8 +5,11 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Getter @Setter @Builder
-@NoArgsConstructor @AllArgsConstructor
+@Table(name = "breach_rules")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BreachRule {
 
     @Id
@@ -14,8 +17,14 @@ public class BreachRule {
     private Long id;
 
     private String ruleName;
+
+    @Column(nullable = false)
     private BigDecimal penaltyPerDay;
+
+    @Column(nullable = false)
     private Double maxPenaltyPercentage;
+
     private boolean active;
-    private boolean isDefaultRule;
+
+    private Boolean isDefaultRule;
 }
