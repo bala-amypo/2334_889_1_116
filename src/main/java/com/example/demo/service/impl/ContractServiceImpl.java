@@ -19,7 +19,7 @@ public class ContractServiceImpl implements ContractService {
         this.contractRepository = contractRepository;
         this.deliveryRecordRepository = deliveryRecordRepository;
 
-    ]
+    }
 
     public Contract createContract(Contract contract) {
         if (contract.getBaseContractValue().compareTo(java.math.BigDecimal.ZERO) <= 0) {
