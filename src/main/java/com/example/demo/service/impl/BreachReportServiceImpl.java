@@ -1,25 +1,20 @@
-package com.example.demo.service.impl;
+@Service
+public class BreachReportServiceImpl implements BreachReportService {
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
-import java.util.*;
-
-public class BreachReportServiceImpl {
-
-    BreachReportRepository breachReportRepository;
-    PenaltyCalculationRepository penaltyCalculationRepository;
-    ContractRepository contractRepository;
+    private BreachReportRepository breachReportRepository;
+    private PenaltyCalculationRepository penaltyCalculationRepository;
+    private ContractRepository contractRepository;
 
     public BreachReport generateReport(Long id) {
-        Contract c = contractRepository.findById(id)
-                .orElseThrow();
+        contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contract not found"));
 
         PenaltyCalculation pc = penaltyCalculationRepository
                 .findTopByContractIdOrderByCalculatedAtDesc(id)
                 .orElseThrow(() -> new RuntimeException("No penalty calculation"));
 
         BreachReport r = BreachReport.builder()
-                .contract(c)
+                .contract(pc.getContract())
                 .daysDelayed(pc.getDaysDelayed())
                 .penaltyAmount(pc.getCalculatedPenalty())
                 .build();
@@ -27,11 +22,11 @@ public class BreachReportServiceImpl {
         return breachReportRepository.save(r);
     }
 
-    public List<BreachReport> getReportsForContract(Long id) {
-        return breachReportRepository.findByContractId(id);
-    }
-
     public List<BreachReport> getAllReports() {
         return breachReportRepository.findAll();
+    }
+
+    public List<BreachReport> getReportsForContract(Long id) {
+        return breachReportRepository.findByContractId(id);
     }
 }

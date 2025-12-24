@@ -1,20 +1,11 @@
-package com.example.demo.service.impl;
+@Service
+public class BreachRuleServiceImpl implements BreachRuleService {
 
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
-import java.util.*;
-
-public class BreachRuleServiceImpl {
-
-    BreachRuleRepository breachRuleRepository;
+    private BreachRuleRepository breachRuleRepository;
 
     public BreachRule createRule(BreachRule r) {
-        if (r.getPenaltyPerDay().signum() <= 0)
+        if (r.getPenaltyPerDay().intValue() <= 0 || r.getMaxPenaltyPercentage() > 100)
             throw new IllegalArgumentException();
-
-        if (r.getMaxPenaltyPercentage() > 100)
-            throw new IllegalArgumentException();
-
         return breachRuleRepository.save(r);
     }
 

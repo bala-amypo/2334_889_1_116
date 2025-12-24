@@ -2,11 +2,12 @@ package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class JwtTokenProvider {
 
-    String jwtSecret;
-    Long jwtExpirationMs;
+    private String jwtSecret;
+    private long jwtExpirationMs;
 
     public String generateToken(Long userId, String email, Set<String> roles) {
         return Jwts.builder()
@@ -20,7 +21,7 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            getClaims(token);
             return true;
         } catch (Exception e) {
             return false;

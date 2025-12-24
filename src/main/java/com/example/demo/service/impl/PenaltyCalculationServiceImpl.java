@@ -1,91 +1,46 @@
-package com.example.demo.service.impl;
-
-import com.example.demo.entity.*;
-import com.example.demo.repository.*;
-import com.example.demo.service.PenaltyService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
 @Service
-public class PenaltyServiceImpl implements PenaltyService {
+public class PenaltyCalculationServiceImpl implements PenaltyCalculationService {
 
-    private final ContractRepository contractRepository;
-    private final DeliveryRecordRepository deliveryRecordRepository;
-    private final BreachRecordRepository breachRecordRepository;
+    private ContractRepository contractRepository;
+    private DeliveryRecordRepository deliveryRecordRepository;
+    private BreachRuleRepository breachRuleRepository;
+    private PenaltyCalculationRepository penaltyCalculationRepository;
 
-    public PenaltyServiceImpl(
-            ContractRepository contractRepository,
-            DeliveryRecordRepository deliveryRecordRepository,
-            BreachRecordRepository breachRecordRepository
-    ) {
-        this.contractRepository = contractRepository;
-        this.deliveryRecordRepository = deliveryRecordRepository;
-        this.breachRecordRepository = breachRecordRepository;
-    }
-
-    @Override
-    @Transactional
-    public BreachRecord calculatePenalty(Long contractId, Long deliveryRecordId) {
-
-        // 1. Validate contract
-        Contract contract = contractRepository.findById(contractId)
+    public PenaltyCalculation calculatePenalty(Long id) {
+        Contract c = contractRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
 
-        // 2. Validate delivery record
-        DeliveryRecord record = deliveryRecordRepository.findById(deliveryRecordId)
-                .orElseThrow(() -> new RuntimeException("Delivery Record not found"));
+        DeliveryRecord dr = deliveryRecordRepository
+                .findFirstByContractIdOrderByDeliveryDateDesc(id)
+                .orElseThrow(() -> new RuntimeException("No delivery record"));
 
-        if (record.getDeliveredQuantity() == null || record.getDeliveredQuantity() < 0) {
-            throw new RuntimeException("Invalid delivered quantity");
-        }
+        BreachRule rule = breachRuleRepository
+                .findFirstByActiveTrueOrderByIsDefaultRuleDesc()
+                .orElseThrow();
 
-        // 3. Quantity-based breach calculation
-        boolean quantityBreach = record.getDeliveredQuantity() < contract.getTotalQuantity();
+        long days = Math.max(0,
+                dr.getDeliveryDate().toEpochDay() - c.getAgreedDeliveryDate().toEpochDay());
 
-        // 4. Day delay calculation
-        long delayDays = 0;
-        boolean delayBreach = false;
+        double maxPenalty = c.getBaseContractValue().doubleValue()
+                * rule.getMaxPenaltyPercentage() / 100;
 
-        if (record.getDeliveredDate() != null) {
-            LocalDate dueDate = contract.getEndDate();
-            delayDays = ChronoUnit.DAYS.between(dueDate, record.getDeliveredDate());
-            delayBreach = delayDays > 0;
-        }
+        double penalty = Math.min(days * rule.getPenaltyPerDay().doubleValue(), maxPenalty);
 
-        // 5. Penalty calculation
-        BigDecimal penaltyAmount = BigDecimal.ZERO;
+        PenaltyCalculation pc = PenaltyCalculation.builder()
+                .contract(c)
+                .daysDelayed((int) days)
+                .calculatedPenalty(BigDecimal.valueOf(penalty))
+                .build();
 
-        if (quantityBreach) {
-            BigDecimal shortQty = BigDecimal.valueOf(
-                    contract.getTotalQuantity() - record.getDeliveredQuantity()
-            );
-            penaltyAmount = penaltyAmount.add(
-                    shortQty.multiply(contract.getPenaltyPerUnit())
-            );
-        }
+        return penaltyCalculationRepository.save(pc);
+    }
 
-        if (delayBreach && contract.getPenaltyPerDay() != null) {
-            penaltyAmount = penaltyAmount.add(
-                    contract.getPenaltyPerDay().multiply(BigDecimal.valueOf(delayDays))
-            );
-        }
+    public PenaltyCalculation getCalculationById(Long id) {
+        return penaltyCalculationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Calculation not found"));
+    }
 
-        // 6. Prepare breach record
-        BreachRecord breach = new BreachRecord();
-        breach.setContract(contract);
-        breach.setDeliveryRecord(record);
-        breach.setPenaltyAmount(penaltyAmount);
-        breach.setDaysDelayed(delayDays);
-        breach.setBreachReason(
-                (delayBreach ? "Delayed delivery" : "") +
-                (quantityBreach ? " Quantity shortage" : "")
-        );
-
-        // 7. Save breach record
-        return breachRecordRepository.save(breach);
+    public List<PenaltyCalculation> getCalculationsForContract(Long id) {
+        return penaltyCalculationRepository.findByContractId(id);
     }
 }
