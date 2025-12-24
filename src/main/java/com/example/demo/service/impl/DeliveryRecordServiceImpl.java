@@ -1,46 +1,37 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Contract;
-import com.example.demo.entity.DeliveryRecord;
-import com.example.demo.repository.ContractRepository;
-import com.example.demo.repository.DeliveryRecordRepository;
-import com.example.demo.service.DeliveryRecordService;
-import org.springframework.stereotype.Service;
-
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
-@Service
-public class DeliveryRecordServiceImpl implements DeliveryRecordService {
+public class DeliveryRecordServiceImpl {
 
-    private DeliveryRecordRepository deliveryRecordRepository;
-    private ContractRepository contractRepository;
+    DeliveryRecordRepository deliveryRecordRepository;
+    ContractRepository contractRepository;
 
-    @Override
-    public DeliveryRecord createDeliveryRecord(DeliveryRecord record) {
-        if (record.getDeliveryDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Delivery date cannot be in the future");
-        }
-        Contract c = contractRepository.findById(record.getContract().getId())
+    public DeliveryRecord createDeliveryRecord(DeliveryRecord r) {
+        if (r.getDeliveryDate().isAfter(LocalDate.now()))
+            throw new IllegalArgumentException("in the future");
+
+        contractRepository.findById(r.getContract().getId())
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
-        record.setContract(c);
-        return deliveryRecordRepository.save(record);
+
+        return deliveryRecordRepository.save(r);
     }
 
-    @Override
-    public DeliveryRecord getLatestDeliveryRecord(Long contractId) {
-        return deliveryRecordRepository.findFirstByContractIdOrderByDeliveryDateDesc(contractId)
+    public DeliveryRecord getLatestDeliveryRecord(Long id) {
+        return deliveryRecordRepository
+                .findFirstByContractIdOrderByDeliveryDateDesc(id)
                 .orElseThrow(() -> new RuntimeException("No delivery records found"));
     }
 
-    @Override
     public DeliveryRecord getRecordById(Long id) {
         return deliveryRecordRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Delivery record not found"));
     }
 
-    @Override
-    public List<DeliveryRecord> getDeliveryRecordsForContract(Long contractId) {
-        return deliveryRecordRepository.findByContractIdOrderByDeliveryDateAsc(contractId);
+    public List<DeliveryRecord> getDeliveryRecordsForContract(Long id) {
+        return deliveryRecordRepository.findByContractIdOrderByDeliveryDateAsc(id);
     }
 }

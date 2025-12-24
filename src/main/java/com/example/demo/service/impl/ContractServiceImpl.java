@@ -1,25 +1,20 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Contract;
-import com.example.demo.entity.DeliveryRecord;
-import com.example.demo.repository.ContractRepository;
-import com.example.demo.repository.DeliveryRecordRepository;
-import com.example.demo.service.ContractService;
-import org.springframework.stereotype.Service;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
+import java.util.*;
+import java.time.LocalDate;
 
-import java.util.List;
+public class ContractServiceImpl {
 
-@Service
-public class ContractServiceImpl implements ContractService {
+    ContractRepository contractRepository;
+    DeliveryRecordRepository deliveryRecordRepository;
 
-    private ContractRepository contractRepository;
-    private DeliveryRecordRepository deliveryRecordRepository;
+    public Contract createContract(Contract c) {
+        if (c.getBaseContractValue() == null || c.getBaseContractValue().signum() <= 0)
+            throw new IllegalArgumentException("Base contract value");
 
-    public Contract createContract(Contract contract) {
-        if (contract.getBaseContractValue().compareTo(java.math.BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Base contract value must be > 0");
-        }
-        return contractRepository.save(contract);
+        return contractRepository.save(c);
     }
 
     public Contract getContractById(Long id) {
@@ -27,13 +22,13 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new RuntimeException("Contract not found"));
     }
 
-    public Contract updateContract(Long id, Contract updated) {
-        Contract existing = getContractById(id);
-        existing.setTitle(updated.getTitle());
-        existing.setCounterpartyName(updated.getCounterpartyName());
-        existing.setAgreedDeliveryDate(updated.getAgreedDeliveryDate());
-        existing.setBaseContractValue(updated.getBaseContractValue());
-        return contractRepository.save(existing);
+    public Contract updateContract(Long id, Contract in) {
+        Contract c = getContractById(id);
+        c.setTitle(in.getTitle());
+        c.setCounterpartyName(in.getCounterpartyName());
+        c.setAgreedDeliveryDate(in.getAgreedDeliveryDate());
+        c.setBaseContractValue(in.getBaseContractValue());
+        return contractRepository.save(c);
     }
 
     public List<Contract> getAllContracts() {
@@ -42,15 +37,14 @@ public class ContractServiceImpl implements ContractService {
 
     public void updateContractStatus(Long id) {
         Contract c = getContractById(id);
-        DeliveryRecord latest = deliveryRecordRepository.findFirstByContractIdOrderByDeliveryDateDesc(id)
-                .orElse(null);
-        if (latest == null) {
-            c.setStatus("ACTIVE");
-        } else if (latest.getDeliveryDate().isAfter(c.getAgreedDeliveryDate())) {
-            c.setStatus("BREACHED");
-        } else {
-            c.setStatus("ACTIVE");
-        }
+        deliveryRecordRepository.findFirstByContractIdOrderByDeliveryDateDesc(id)
+                .ifPresentOrElse(
+                    dr -> {
+                        if (dr.getDeliveryDate().isAfter(c.getAgreedDeliveryDate()))
+                            c.setStatus("BREACHED");
+                    },
+                    () -> c.setStatus("ACTIVE")
+                );
         contractRepository.save(c);
     }
 }

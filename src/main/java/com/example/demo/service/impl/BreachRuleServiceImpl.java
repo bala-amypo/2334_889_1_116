@@ -1,30 +1,23 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.BreachRule;
-import com.example.demo.repository.BreachRuleRepository;
-import com.example.demo.service.BreachRuleService;
-import org.springframework.stereotype.Service;
+import com.example.demo.entity.*;
+import com.example.demo.repository.*;
+import java.util.*;
 
-import java.math.BigDecimal;
-import java.util.List;
+public class BreachRuleServiceImpl {
 
-@Service
-public class BreachRuleServiceImpl implements BreachRuleService {
+    BreachRuleRepository breachRuleRepository;
 
-    private BreachRuleRepository breachRuleRepository;
+    public BreachRule createRule(BreachRule r) {
+        if (r.getPenaltyPerDay().signum() <= 0)
+            throw new IllegalArgumentException();
 
-    @Override
-    public BreachRule createRule(BreachRule rule) {
-        if (rule.getPenaltyPerDay().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Penalty per day must be > 0");
-        }
-        if (rule.getMaxPenaltyPercentage() != null && (rule.getMaxPenaltyPercentage() < 0 || rule.getMaxPenaltyPercentage() > 100)) {
-            throw new IllegalArgumentException("Max penalty percentage must be between 0 and 100");
-        }
-        return breachRuleRepository.save(rule);
+        if (r.getMaxPenaltyPercentage() > 100)
+            throw new IllegalArgumentException();
+
+        return breachRuleRepository.save(r);
     }
 
-    @Override
     public void deactivateRule(Long id) {
         BreachRule r = breachRuleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Rule not found"));
@@ -32,13 +25,11 @@ public class BreachRuleServiceImpl implements BreachRuleService {
         breachRuleRepository.save(r);
     }
 
-    @Override
     public BreachRule getActiveDefaultOrFirst() {
         return breachRuleRepository.findFirstByActiveTrueOrderByIsDefaultRuleDesc()
                 .orElseThrow(() -> new RuntimeException("No active breach rule"));
     }
 
-    @Override
     public List<BreachRule> getAllRules() {
         return breachRuleRepository.findAll();
     }
