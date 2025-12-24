@@ -2,32 +2,23 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.BreachReport;
 import com.example.demo.service.BreachReportService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/breach-reports")
+@RequestMapping("/api/reports")
+@RequiredArgsConstructor
 public class BreachReportController {
 
-    private final BreachReportService service;
+    private final BreachReportService breachReportService;
 
-    public BreachReportController(BreachReportService service) {
-        this.service = service;
+    @PostMapping("/generate/{contractId}")
+    public BreachReport generateReport(@PathVariable Long contractId) {
+        return breachReportService.generateBreachReport(contractId);
     }
 
-    @PostMapping("/{contractId}")
-    public BreachReport generate(@PathVariable Long contractId) {
-        return service.generateReport(contractId);
-    }
-
-    @GetMapping("/contract/{contractId}")
-    public List<BreachReport> getByContract(@PathVariable Long contractId) {
-        return service.getReportsForContract(contractId);
-    }
-
-    @GetMapping
-    public List<BreachReport> getAll() {
-        return service.getAllReports();
+    @GetMapping("/latest/{contractId}")
+    public BreachReport getLatestReport(@PathVariable Long contractId) {
+        return breachReportService.getLatestReport(contractId);
     }
 }
