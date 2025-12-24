@@ -15,6 +15,8 @@ public class ContractServiceImpl implements ContractService {
     private ContractRepository contractRepository;
     private DeliveryRecordRepository deliveryRecordRepository;
 
+    public 
+
     public Contract createContract(Contract contract) {
         if (contract.getBaseContractValue().compareTo(java.math.BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Base contract value must be > 0");
