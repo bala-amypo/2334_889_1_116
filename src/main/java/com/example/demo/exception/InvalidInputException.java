@@ -1,7 +1,7 @@
-package com.example.demo.exception;
+// package com.example.demo.exception;
 
-public class InvalidInputException extends RuntimeException {
-    public InvalidInputException(String message) {
-        super(message);
-    }
-}
+// public class InvalidInputException extends RuntimeException {
+//     public InvalidInputException(String message) {
+//         super(message);
+//     }
+// }

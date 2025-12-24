@@ -1,7 +1,7 @@
-package com.example.demo.exception;
+// package com.example.demo.exception;
 
-public class AuthenticationException extends RuntimeException {
-    public AuthenticationException(String message) {
-        super(message);
-    }
-}
+// public class AuthenticationException extends RuntimeException {
+//     public AuthenticationException(String message) {
+//         super(message);
+//     }
+// }
