@@ -1,8 +1,13 @@
 package com.example.demo.repository;
 
- @Repository annotation.
+import com.example.demo.entity.VendorTier;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface VendorTierRepository {
+import java.util.Optional;
+
+public interface VendorTierRepository extends JpaRepository<VendorTier, Long> {
+
+    Optional<VendorTier> findByActiveTrueOrderByMinScoreThresholdDesc();
 
     boolean existsByTierName(String tierName);
 }
