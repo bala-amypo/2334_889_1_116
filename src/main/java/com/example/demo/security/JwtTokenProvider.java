@@ -15,11 +15,12 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    // REQUIRED by TestNG via reflection
+    // MUST EXIST – injected by DemoFullProjectTest using reflection
     private String jwtSecret =
-            "THIS_IS_A_DEFAULT_SECRET_KEY_WHICH_WILL_BE_OVERRIDDEN_BY_TESTS_AND_MUST_BE_LONG_ENOUGH_512_BITS_MINIMUM";
+            "THIS_IS_A_DEFAULT_SECRET_KEY_ONLY_FOR_LOCAL_RUN_AND_TEST_OVERRIDE_MUST_BE_AT_LEAST_64_CHARACTERS_LONG";
 
-    private static final long EXPIRATION_MS = 3600000;
+    // MUST EXIST – injected by DemoFullProjectTest using reflection
+    private long jwtExpirationMs = 3600000; // 1 hour
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
@@ -27,7 +28,7 @@ public class JwtTokenProvider {
 
     public String generateToken(Long userId, String email, Set<String> roles) {
 
-        String rolesCsv = roles == null
+        String rolesCsv = (roles == null || roles.isEmpty())
                 ? ""
                 : roles.stream().collect(Collectors.joining(","));
 
@@ -37,7 +38,7 @@ public class JwtTokenProvider {
                 .claim("email", email)
                 .claim("roles", rolesCsv)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
