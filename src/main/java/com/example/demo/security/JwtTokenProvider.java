@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,10 +15,15 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    private static final SecretKey SECRET_KEY =
-            Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    // REQUIRED by TestNG via reflection
+    private String jwtSecret =
+            "THIS_IS_A_DEFAULT_SECRET_KEY_WHICH_WILL_BE_OVERRIDDEN_BY_TESTS_AND_MUST_BE_LONG_ENOUGH_512_BITS_MINIMUM";
 
     private static final long EXPIRATION_MS = 3600000;
+
+    private SecretKey getSigningKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(Long userId, String email, Set<String> roles) {
 
@@ -32,13 +38,13 @@ public class JwtTokenProvider {
                 .claim("roles", rolesCsv)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS512)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
 
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
