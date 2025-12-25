@@ -1,8 +1,8 @@
 package com.example.demo.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+ @Repository annotation.
 
-public interface VendorTierRepository extends JpaRepository<Object, Long> {
+public interface VendorTierRepository {
 
-    boolean existsByTierName(String name);
+    boolean existsByTierName(String tierName);
 }
