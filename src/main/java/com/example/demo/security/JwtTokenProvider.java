@@ -60,6 +60,73 @@
 //         }
 //     }
 // }
+// ========
+// package com.example.demo.security;
+
+// import io.jsonwebtoken.*;
+// import io.jsonwebtoken.security.Keys;
+// import org.springframework.stereotype.Component;
+
+// import javax.crypto.SecretKey;
+// import java.util.Date;
+// import java.util.Set;
+
+// @Component
+// public class JwtTokenProvider {
+
+//     private final SecretKey secretKey =
+//             Keys.hmacShaKeyFor(
+//                     "THIS_IS_A_VERY_SECURE_SECRET_KEY_FOR_JWT_123456"
+//                             .getBytes()
+//             );
+
+//     private final long validityInMillis = 86400000; // 1 day
+
+//     // ✅ This matches the TEST expectation
+//     public String generateToken(long userId, String email, Set<String> roles) {
+//         Claims claims = Jwts.claims().setSubject(email);
+//         claims.put("userId", userId);
+//         claims.put("roles", roles);
+
+//         Date now = new Date();
+//         Date expiry = new Date(now.getTime() + validityInMillis);
+
+//         return Jwts.builder()
+//                 .setClaims(claims)
+//                 .setIssuedAt(now)
+//                 .setExpiration(expiry)
+//                 .signWith(secretKey, SignatureAlgorithm.HS256)
+//                 .compact();
+//     }
+
+//     // ✅ Optional overload (safe to keep)
+//     public String generateToken(String email) {
+//         return generateToken(0L, email, Set.of("USER"));
+//     }
+
+//     // ✅ REQUIRED by tests
+//     public boolean validateToken(String token) {
+//         try {
+//             Jwts.parserBuilder()
+//                     .setSigningKey(secretKey)
+//                     .build()
+//                     .parseClaimsJws(token);
+//             return true;
+//         } catch (JwtException | IllegalArgumentException e) {
+//             return false;
+//         }
+//     }
+
+//     // ✅ REQUIRED by tests
+//     public Claims getClaims(String token) {
+//         return Jwts.parserBuilder()
+//                 .setSigningKey(secretKey)
+//                 .build()
+//                 .parseClaimsJws(token)
+//                 .getBody();
+//     }
+// }
+
 
 package com.example.demo.security;
 
@@ -68,22 +135,25 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Set;
 
 @Component
 public class JwtTokenProvider {
 
-    private final SecretKey secretKey =
-            Keys.hmacShaKeyFor(
-                    "THIS_IS_A_VERY_SECURE_SECRET_KEY_FOR_JWT_123456"
-                            .getBytes()
-            );
+    // ✅ REQUIRED by tests (reflection)
+    private String jwtSecret = "THIS_IS_A_VERY_SECURE_SECRET_KEY_FOR_JWT_123456";
 
     private final long validityInMillis = 86400000; // 1 day
 
-    // ✅ This matches the TEST expectation
+    private SecretKey getSecretKey() {
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    }
+
+    // ✅ REQUIRED signature by tests
     public String generateToken(long userId, String email, Set<String> roles) {
+
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("userId", userId);
         claims.put("roles", roles);
@@ -95,11 +165,11 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
-                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // ✅ Optional overload (safe to keep)
+    // Optional overload (safe)
     public String generateToken(String email) {
         return generateToken(0L, email, Set.of("USER"));
     }
@@ -108,7 +178,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
+                    .setSigningKey(getSecretKey())
                     .build()
                     .parseClaimsJws(token);
             return true;
@@ -120,7 +190,7 @@ public class JwtTokenProvider {
     // ✅ REQUIRED by tests
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(secretKey)
+                .setSigningKey(getSecretKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
