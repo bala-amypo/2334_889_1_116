@@ -49,16 +49,10 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
     }
-    public Claims extractmail(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+
     public boolean validateToken(String token) {
         try {
-            getextractmail(token);
+            getClaims(token);
             return true;
         } catch (Exception e) {
             return false;
