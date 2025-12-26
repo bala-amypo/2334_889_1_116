@@ -50,12 +50,12 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    // public boolean validateToken(String token) {
-    //     try {
-    //         getClaims(token);
-    //         return true;
-    //     } catch (Exception e) {
-    //         return false;
-    //     }
-    // }
+    public boolean validateToken(String token) {
+        try {
+            getClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
