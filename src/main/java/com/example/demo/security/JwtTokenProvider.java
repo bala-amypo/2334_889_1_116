@@ -17,7 +17,8 @@ public class JwtTokenProvider {
 
     
     private String jwtSecret =
-            "THIS_IS_A_DEFAULT_SECRET_KEY_ONLY_FOR_LOCAL_RUN_AND_TEST_OVERRIDE_MUST_BE_AT_LEAST_64_CHARACTERS_LONG";
+            "a-string-secret-at-least-256-bits-long";
+            // "THIS_IS_A_DEFAULT_SECRET_KEY_ONLY_FOR_LOCAL_RUN_AND_TEST_OVERRIDE_MUST_BE_AT_LEAST_64_CHARACTERS_LONG";
 
    
     private long jwtExpirationMs = 3600000; 
