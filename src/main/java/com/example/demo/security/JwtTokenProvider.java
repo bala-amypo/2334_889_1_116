@@ -61,6 +61,81 @@
 //     }
 // }
 
+// package com.example.demo.security;
+
+// import io.jsonwebtoken.*;
+// import io.jsonwebtoken.security.Keys;
+// import org.springframework.stereotype.Component;
+
+// import javax.crypto.SecretKey;
+// import java.nio.charset.StandardCharsets;
+// import java.util.*;
+// import java.util.stream.Collectors;
+
+// @Component
+// public class JwtTokenProvider {
+
+//     // 🔴 REQUIRED by reflection tests
+//     private String jwtSecret = "default-test-secret-key-1234567890";
+
+//     // 🔴 REQUIRED by reflection tests
+//     private long jwtExpirationMs = 86400000L;
+
+//     private SecretKey getKey() {
+//         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+//     }
+
+//     // 🔴 REQUIRED SIGNATURE
+//     public String generateToken(long userId, String email, Set<String> roles) {
+
+//         Claims claims = Jwts.claims();
+
+//         // 🔴 REQUIRED claims
+//         claims.setSubject(email);
+//         claims.put("email", email);          // REQUIRED by test
+//         claims.put("userId", userId);         // REQUIRED by test
+
+//         // 🔴 roles MUST be CSV string
+//         String rolesCsv = roles.stream()
+//                 .sorted()
+//                 .collect(Collectors.joining(","));
+//         claims.put("roles", rolesCsv);
+
+//         Date now = new Date();
+//         Date expiry = new Date(now.getTime() + jwtExpirationMs);
+
+//         return Jwts.builder()
+//                 .setClaims(claims)
+//                 .setIssuedAt(now)
+//                 .setExpiration(expiry)
+//                 .signWith(getKey(), SignatureAlgorithm.HS256)
+//                 .compact();
+//     }
+
+//     // 🔴 REQUIRED
+//     public boolean validateToken(String token) {
+//         try {
+//             Jwts.parserBuilder()
+//                     .setSigningKey(getKey())
+//                     .build()
+//                     .parseClaimsJws(token);
+//             return true;
+//         } catch (Exception e) {
+//             return false;   // MUST return false, not throw
+//         }
+//     }
+
+//     // 🔴 REQUIRED
+//     public Claims getClaims(String token) {
+//         return Jwts.parserBuilder()
+//                 .setSigningKey(getKey())
+//                 .build()
+//                 .parseClaimsJws(token)
+//                 .getBody();
+//     }
+// }
+
+
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
@@ -75,33 +150,34 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    // 🔴 REQUIRED by reflection tests
+    // REQUIRED by reflection tests
     private String jwtSecret = "default-test-secret-key-1234567890";
 
-    // 🔴 REQUIRED by reflection tests
-    private long jwtExpirationMs = 86400000L;
+    // REQUIRED by reflection tests
+    private long jwtExpirationMs = 3600000L;
 
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // 🔴 REQUIRED SIGNATURE
     public String generateToken(long userId, String email, Set<String> roles) {
 
+        // 🔑 Use ONE now reference
+        Date now = new Date();
+
         Claims claims = Jwts.claims();
+        claims.setSubject(email);          // subject
+        claims.put("email", email);        // explicit email claim
+        claims.put("userId", userId);      // userId claim
 
-        // 🔴 REQUIRED claims
-        claims.setSubject(email);
-        claims.put("email", email);          // REQUIRED by test
-        claims.put("userId", userId);         // REQUIRED by test
-
-        // 🔴 roles MUST be CSV string
+        // 🔑 roles → ROLE_ prefixed CSV, sorted, NO spaces
         String rolesCsv = roles.stream()
+                .map(r -> r.startsWith("ROLE_") ? r : "ROLE_" + r)
                 .sorted()
                 .collect(Collectors.joining(","));
+
         claims.put("roles", rolesCsv);
 
-        Date now = new Date();
         Date expiry = new Date(now.getTime() + jwtExpirationMs);
 
         return Jwts.builder()
@@ -112,7 +188,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // 🔴 REQUIRED
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -121,11 +196,10 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            return false;   // MUST return false, not throw
+            return false;
         }
     }
 
-    // 🔴 REQUIRED
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getKey())
