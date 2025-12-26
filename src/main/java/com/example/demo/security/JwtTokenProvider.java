@@ -80,7 +80,7 @@ public class JwtTokenProvider {
     // REQUIRED by reflection tests
     private String jwtSecret = "THIS_IS_A_VERY_SECURE_SECRET_KEY_FOR_JWT_123456";
 
-    private final long validityInMillis = 86400000; // 1 day
+    private final long validityInMillis = 3600000; // 1 day
 
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
