@@ -35,7 +35,6 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("userId", userId)
-                .claim("email", email)
                 .claim("roles", rolesCsv)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
