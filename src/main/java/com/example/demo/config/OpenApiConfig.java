@@ -20,13 +20,6 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
     bearerFormat = "JWT"
 )
 public class OpenApiConfig {
-// }
-
-
-// @Configuration
-// public class OpenApiConfig {
-
-//     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .servers(List.of(
@@ -34,3 +27,11 @@ public class OpenApiConfig {
                 ));
     }
 }
+
+// }
+
+
+// @Configuration
+// public class OpenApiConfig {
+
+//     @Bean
