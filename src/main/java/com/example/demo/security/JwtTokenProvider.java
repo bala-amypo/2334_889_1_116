@@ -36,7 +36,7 @@ public class JwtTokenProvider {
                 .setSubject(email)
                 .claim("userId", userId)
                 .claim("email", email)
-                // .claim("roles", rolesCsv)
+                .claim("roles", rolesCsv)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
@@ -50,12 +50,12 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            getClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
+    // public boolean validateToken(String token) {
+    //     try {
+    //         getClaims(token);
+    //         return true;
+    //     } catch (Exception e) {
+    //         return false;
+    //     }
+    // }
 }
