@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    // MUST EXIST – injected by DemoFullProjectTest using reflection
+    
     private String jwtSecret =
             "THIS_IS_A_DEFAULT_SECRET_KEY_ONLY_FOR_LOCAL_RUN_AND_TEST_OVERRIDE_MUST_BE_AT_LEAST_64_CHARACTERS_LONG";
 
-    // MUST EXIST – injected by DemoFullProjectTest using reflection
-    private long jwtExpirationMs = 3600000; // 1 hour
+   
+    private long jwtExpirationMs = 3600000; 
 
     private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
