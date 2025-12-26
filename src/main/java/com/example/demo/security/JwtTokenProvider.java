@@ -42,29 +42,20 @@ public class JwtTokenProvider {
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
-    public Claims extractemail(String email){
-         return Jwts.parserBuilder()
+    public Claims getClaims(String token) {
+        return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
-                .getBody()
-                .getsubject();
+                .getBody();
     }
-    // public Claims getClaims(String token) {
-    //     return Jwts.parserBuilder()
-    //             .setSigningKey(getSigningKey())
-    //             .build()
-    //             .parseClaimsJws(token)
-    //             .getBody()
-    //             .getsubject();
-    // }
 
-    // public boolean validateToken(String token) {
-    //     try {
-    //         getClaims(token);
-    //         return true;
-    //     } catch (Exception e) {
-    //         return false;
-    //     }
-    // }
+    public boolean validateToken(String token) {
+        try {
+            getClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
