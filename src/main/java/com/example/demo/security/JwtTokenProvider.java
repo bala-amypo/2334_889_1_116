@@ -66,91 +66,75 @@
 //     }
 // }
 
-
-
-
-
-
-
 package com.example.demo.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
-    // Ensure the secret is long enough for HS256/HS512
-    private String jwtSecret = "default-test-secret-key-1234567890-secure-string-padding";
+
+    // ❗ MUST NOT be static/final (tests inject value)
+    private String jwtSecret = "default-test-secret-key-123456789012345678901234";
+
     private long jwtExpirationMs = 3600000L;
 
-    private SecretKey getKey() {
+    private SecretKey getSigningKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Required by Section 8: Generates JWT with claims 
+    // ================= TOKEN GENERATION =================
     public String generateToken(Long userId, String email, Set<String> roles) {
-        Date now = new Date();
-        Date expiry = new Date(now.getTime() + jwtExpirationMs);
 
-        // Convert roles to CSV to satisfy 'testJwtRolesCsv'
-        String rolesCsv = roles.stream()
-                .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
-                .collect(Collectors.joining(","));
-
-        // Build claims to satisfy 'testJwtGenerationClaims' and 'testJwtContainsUserIdAndEmail'
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId); 
-        claims.put("email", email);   
-        claims.put("roles", rolesCsv); 
+        String rolesCsv = (roles == null || roles.isEmpty())
+                ? ""
+                : String.join(",", roles);
 
         return Jwts.builder()
-                .setClaims(claims)
+                .claim("userId", userId)
+                .claim("email", email)
+                .claim("roles", rolesCsv)
                 .setSubject(email)
-                .setIssuedAt(now)
-                .setExpiration(expiry)
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    // Required: Extracts username/email from token [cite: 279]
-    public String getUsername(String token) {
-        return getClaims(token).getSubject();
-    }
-
-    // Required: Extracts roles from token [cite: 280]
-    public Set<String> getRole(String token) {
-        String rolesCsv = getClaims(token).get("roles", String.class);
-        if (rolesCsv == null || rolesCsv.isEmpty()) {
-            return Collections.emptySet();
-        }
-        return Arrays.stream(rolesCsv.split(","))
-                     .collect(Collectors.toSet());
-    }
-
-    // Required: Parses and returns token claims [cite: 281]
+    // ================= CLAIMS =================
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(getKey())
+                .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    // Required: Validates token signature and expiration [cite: 282]
+    // ================= VALIDATION =================
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(getKey())
-                    .build()
-                    .parseClaimsJws(token);
+            getClaims(token);
             return true;
         } catch (Exception e) {
             return false;
         }
+    }
+
+    // ================= REQUIRED BY OTHER TESTS =================
+    public String getUsername(String token) {
+        return getClaims(token).get("email", String.class);
+    }
+
+    public Set<String> getRole(String token) {
+        String rolesCsv = getClaims(token).get("roles", String.class);
+        if (rolesCsv == null || rolesCsv.isEmpty()) {
+            return Collections.emptySet();
+        }
+        return new HashSet<>(Arrays.asList(rolesCsv.split(",")));
     }
 }
