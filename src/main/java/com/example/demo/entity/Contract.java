@@ -8,10 +8,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Contract {
 
     @Id
@@ -23,9 +19,37 @@ public class Contract {
     private String counterpartyName;
     private LocalDate agreedDeliveryDate;
     private BigDecimal baseContractValue;
-    private String status = "ACTIVE";
+    private String status;
 
+    @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    // getters/setters
 }
+
+
+// @Entity
+// @Getter @Setter
+// @NoArgsConstructor
+// @AllArgsConstructor
+// @Builder
+// public class Contract {
+
+//     @Id
+//     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//     private Long id;
+
+//     private String contractNumber;
+//     private String title;
+//     private String counterpartyName;
+//     private LocalDate agreedDeliveryDate;
+//     private BigDecimal baseContractValue;
+//     private String status = "ACTIVE";
+
+//     private LocalDateTime createdAt;
+//     private LocalDateTime updatedAt;
+// }
 
