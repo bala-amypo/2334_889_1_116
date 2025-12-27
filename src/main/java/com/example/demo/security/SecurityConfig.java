@@ -60,36 +60,29 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // disable CSRF for APIs
+            
             .csrf(csrf -> csrf.disable())
 
-            // handle unauthorized requests
+            
             .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 
             // session management: stateless for JWT
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            // authorize requests
+            
             .authorizeHttpRequests(auth -> auth
-                // public endpoints
                 .requestMatchers(
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/auth/**"
                 ).permitAll()
-                // only ADMIN can create contracts
                 .requestMatchers(HttpMethod.POST, "/api/contracts").hasRole("ADMIN")
-                // all other requests need authentication
                 .anyRequest().authenticated()
             );
-
-        // add JWT filter before Spring Security authentication
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-
-    // Expose AuthenticationManager for login
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
