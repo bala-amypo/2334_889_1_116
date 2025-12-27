@@ -7,30 +7,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-public class Contract {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String contractNumber;
-    private String title;
-    private String counterpartyName;
-    private LocalDate agreedDeliveryDate;
-    private BigDecimal baseContractValue;
-    private String status;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    // getters/setters
-}
-
-
 // @Entity
 // @Getter @Setter
 // @NoArgsConstructor
