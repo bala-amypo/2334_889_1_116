@@ -21,7 +21,7 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/auth/**"
                 ).permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
             )
             .exceptionHandling(ex ->
                 ex.authenticationEntryPoint(new JwtAuthenticationEntryPoint())
