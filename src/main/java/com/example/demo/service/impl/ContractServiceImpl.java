@@ -8,9 +8,8 @@ import com.example.demo.repository.DeliveryRecordRepository;
 import com.example.demo.service.ContractService;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
-
-
 
 public class ContractServiceImpl implements ContractService {
 
@@ -66,5 +65,3 @@ public class ContractServiceImpl implements ContractService {
         contractRepository.save(c);
     }
 }
-
-
