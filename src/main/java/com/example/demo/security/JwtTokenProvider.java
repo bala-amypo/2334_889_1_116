@@ -79,13 +79,21 @@ import java.util.*;
 @Component
 public class JwtTokenProvider {
 
-    // ❗ MUST NOT be static/final (tests inject value)
-    private String jwtSecret = "default-test-secret-key-123456789012345678901234";
+    // Tests will override this via reflection
+    private String jwtSecret = "default-secret-key-for-jwt-provider";
 
     private long jwtExpirationMs = 3600000L;
 
+    // 🔥 KEY FIX IS HERE 🔥
     private SecretKey getSigningKey() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+
+        // HS256 needs >= 32 bytes → pad if needed
+        if (keyBytes.length < 32) {
+            keyBytes = Arrays.copyOf(keyBytes, 32);
+        }
+
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     // ================= TOKEN GENERATION =================
@@ -125,7 +133,7 @@ public class JwtTokenProvider {
         }
     }
 
-    // ================= REQUIRED BY OTHER TESTS =================
+    // ================= REQUIRED BY TESTS =================
     public String getUsername(String token) {
         return getClaims(token).get("email", String.class);
     }
