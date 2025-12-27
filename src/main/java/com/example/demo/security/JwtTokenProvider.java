@@ -77,7 +77,6 @@ package com.example.demo.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -85,31 +84,29 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
-    // Requirements specify a secret key for HS256/HS512 [cite: 282]
-    private String jwtSecret = "default-test-secret-key-1234567890-secure-padding";
+    // Ensure the secret is long enough for HS256/HS512
+    private String jwtSecret = "default-test-secret-key-1234567890-secure-string-padding";
     private long jwtExpirationMs = 3600000L;
 
     private SecretKey getKey() {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 
-    // Required by Section 8.1 [cite: 278]
+    // Required by Section 8: Generates JWT with claims 
     public String generateToken(Long userId, String email, Set<String> roles) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + jwtExpirationMs);
 
-        // Convert roles to a Comma-Separated Values (CSV) string for the "roles" claim
-        // This addresses testJwtRolesCsv [cite: 278]
+        // Convert roles to CSV to satisfy 'testJwtRolesCsv'
         String rolesCsv = roles.stream()
                 .map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role)
-                .sorted()
                 .collect(Collectors.joining(","));
 
-        // Creating custom claims map [cite: 278, 281]
+        // Build claims to satisfy 'testJwtGenerationClaims' and 'testJwtContainsUserIdAndEmail'
         Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId); // Fixes testJwtContainsUserIdAndEmail
-        claims.put("email", email);   // Fixes testJwtContainsUserIdAndEmail
-        claims.put("roles", rolesCsv); // Fixes testJwtRolesCsv
+        claims.put("userId", userId); 
+        claims.put("email", email);   
+        claims.put("roles", rolesCsv); 
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -120,12 +117,12 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // Required to extract username/email from token 
+    // Required: Extracts username/email from token [cite: 279]
     public String getUsername(String token) {
         return getClaims(token).getSubject();
     }
 
-    // Required to extract roles as a Set 
+    // Required: Extracts roles from token [cite: 280]
     public Set<String> getRole(String token) {
         String rolesCsv = getClaims(token).get("roles", String.class);
         if (rolesCsv == null || rolesCsv.isEmpty()) {
@@ -135,7 +132,7 @@ public class JwtTokenProvider {
                      .collect(Collectors.toSet());
     }
 
-    // Required to parse and return token claims 
+    // Required: Parses and returns token claims [cite: 281]
     public Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getKey())
@@ -144,7 +141,7 @@ public class JwtTokenProvider {
                 .getBody();
     }
 
-    // Required to validate token signature and expiration [cite: 282]
+    // Required: Validates token signature and expiration [cite: 282]
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
