@@ -79,7 +79,7 @@ import java.util.*;
 @Component
 public class JwtTokenProvider {
 
-    // Tests will override this via reflection
+    
     private String jwtSecret = "default-secret-key-for-jwt-provider";
 
     private long jwtExpirationMs = 3600000L;
