@@ -4,13 +4,20 @@ import com.example.demo.entity.BreachRule;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.BreachRuleRepository;
 import com.example.demo.service.BreachRuleService;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@Service   // 🔥 REQUIRED
 public class BreachRuleServiceImpl implements BreachRuleService {
 
-    BreachRuleRepository breachRuleRepository;
+    private final BreachRuleRepository breachRuleRepository;
+
+    // 🔥 Constructor injection (best practice)
+    public BreachRuleServiceImpl(BreachRuleRepository breachRuleRepository) {
+        this.breachRuleRepository = breachRuleRepository;
+    }
 
     @Override
     public BreachRule createRule(BreachRule rule) {
@@ -32,6 +39,7 @@ public class BreachRuleServiceImpl implements BreachRuleService {
         r.setMaxPenaltyPercentage(rule.getMaxPenaltyPercentage());
         r.setActive(rule.getActive());
         r.setIsDefaultRule(rule.getIsDefaultRule());
+
         return breachRuleRepository.save(r);
     }
 
@@ -39,6 +47,7 @@ public class BreachRuleServiceImpl implements BreachRuleService {
     public void deactivateRule(Long id) {
         BreachRule r = breachRuleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
+
         r.setActive(false);
         breachRuleRepository.save(r);
     }
