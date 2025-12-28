@@ -1,24 +1,49 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.BreachReport;
-import com.example.demo.service.BreachReportService;
+import com.example.demo.entity.BreachRule;
+import com.example.demo.service.BreachRuleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reports")
-public class BreachReportController {
+@RequestMapping("/api/breach-rules")
+public class BreachRuleController {
 
-    BreachReportService breachReportService;
+    @Autowired
+    private BreachRuleService breachRuleService;
 
-    @PostMapping("/generate/{contractId}")
-    public BreachReport generate(@PathVariable Long contractId) {
-        return breachReportService.generateReport(contractId);
+    // CREATE breach rule
+    @PostMapping
+    public BreachRule create(@RequestBody BreachRule rule) {
+        return breachRuleService.createRule(rule);
     }
 
+    // UPDATE breach rule
+    @PutMapping("/{id}")
+    public BreachRule update(
+            @PathVariable Long id,
+            @RequestBody BreachRule rule
+    ) {
+        return breachRuleService.updateRule(id, rule);
+    }
+
+    // DEACTIVATE breach rule
+    @PutMapping("/{id}/deactivate")
+    public void deactivate(@PathVariable Long id) {
+        breachRuleService.deactivateRule(id);
+    }
+
+    // GET all breach rules
     @GetMapping
-    public List<BreachReport> list() {
-        return breachReportService.getAllReports();
+    public List<BreachRule> getAll() {
+        return breachRuleService.getAllRules();
+    }
+
+    // GET active default or first rule
+    @GetMapping("/active")
+    public BreachRule getActiveDefault() {
+        return breachRuleService.getActiveDefaultOrFirst();
     }
 }
