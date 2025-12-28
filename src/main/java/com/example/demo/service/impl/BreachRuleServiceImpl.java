@@ -4,6 +4,7 @@ import com.example.demo.entity.BreachRule;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.BreachRuleRepository;
 import com.example.demo.service.BreachRuleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,14 +13,14 @@ import java.util.List;
 @Service
 public class BreachRuleServiceImpl implements BreachRuleService {
 
-    // must NOT be final because tests inject it via reflection
+    @Autowired   // 🔥 THIS FIXES THE 500 ERROR
     private BreachRuleRepository breachRuleRepository;
 
-    // 🔥 REQUIRED for TestNG (no-arg)
+    // Needed for TestNG
     public BreachRuleServiceImpl() {
     }
 
-    // 🔥 REQUIRED for Spring Boot
+    // Optional – Spring will ignore this now
     public BreachRuleServiceImpl(BreachRuleRepository breachRuleRepository) {
         this.breachRuleRepository = breachRuleRepository;
     }
