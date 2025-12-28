@@ -9,12 +9,17 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 
-@Service   // 🔥 REQUIRED
+@Service
 public class BreachRuleServiceImpl implements BreachRuleService {
 
-    private final BreachRuleRepository breachRuleRepository;
+    // must NOT be final because tests inject it via reflection
+    private BreachRuleRepository breachRuleRepository;
 
-    // 🔥 Constructor injection (best practice)
+    // 🔥 REQUIRED for TestNG (no-arg)
+    public BreachRuleServiceImpl() {
+    }
+
+    // 🔥 REQUIRED for Spring Boot
     public BreachRuleServiceImpl(BreachRuleRepository breachRuleRepository) {
         this.breachRuleRepository = breachRuleRepository;
     }
