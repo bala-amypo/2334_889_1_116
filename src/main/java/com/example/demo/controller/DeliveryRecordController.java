@@ -1,16 +1,9 @@
-package com.example.demo.controller;
-
-import com.example.demo.entity.DeliveryRecord;
-import com.example.demo.service.DeliveryRecordService;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/delivery-records")
 public class DeliveryRecordController {
 
-    DeliveryRecordService deliveryRecordService;
+    @Autowired
+    private DeliveryRecordService deliveryRecordService;
 
     @PostMapping
     public DeliveryRecord create(@RequestBody DeliveryRecord record) {
