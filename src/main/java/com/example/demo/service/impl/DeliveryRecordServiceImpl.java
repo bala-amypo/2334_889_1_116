@@ -5,14 +5,24 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ContractRepository;
 import com.example.demo.repository.DeliveryRecordRepository;
 import com.example.demo.service.DeliveryRecordService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class DeliveryRecordServiceImpl implements DeliveryRecordService {
 
-    DeliveryRecordRepository deliveryRecordRepository;
-    ContractRepository contractRepository;
+    @Autowired
+    private DeliveryRecordRepository deliveryRecordRepository;
+
+    @Autowired
+    private ContractRepository contractRepository;
+
+    // Required for TestNG
+    public DeliveryRecordServiceImpl() {
+    }
 
     @Override
     public DeliveryRecord createDeliveryRecord(DeliveryRecord record) {

@@ -4,17 +4,31 @@ import com.example.demo.entity.*;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.*;
 import com.example.demo.service.PenaltyCalculationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+@Service
 public class PenaltyCalculationServiceImpl implements PenaltyCalculationService {
 
-    ContractRepository contractRepository;
-    DeliveryRecordRepository deliveryRecordRepository;
-    BreachRuleRepository breachRuleRepository;
-    PenaltyCalculationRepository penaltyCalculationRepository;
+    @Autowired
+    private ContractRepository contractRepository;
+
+    @Autowired
+    private DeliveryRecordRepository deliveryRecordRepository;
+
+    @Autowired
+    private BreachRuleRepository breachRuleRepository;
+
+    @Autowired
+    private PenaltyCalculationRepository penaltyCalculationRepository;
+
+    // Required for TestNG
+    public PenaltyCalculationServiceImpl() {
+    }
 
     @Override
     public PenaltyCalculation calculatePenalty(Long contractId) {
@@ -41,8 +55,7 @@ public class PenaltyCalculationServiceImpl implements PenaltyCalculationService 
                 c.getBaseContractValue()
                         .multiply(BigDecimal.valueOf(rule.getMaxPenaltyPercentage() / 100));
 
-        BigDecimal finalPenalty =
-                rawPenalty.min(maxPenalty);
+        BigDecimal finalPenalty = rawPenalty.min(maxPenalty);
 
         PenaltyCalculation pc = PenaltyCalculation.builder()
                 .contract(c)
