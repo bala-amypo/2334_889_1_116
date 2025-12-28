@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.Contract;
 import com.example.demo.entity.DeliveryRecord;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.ContractRepository;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service
+@Service   // 🔥 REQUIRED
 public class DeliveryRecordServiceImpl implements DeliveryRecordService {
 
     @Autowired
@@ -26,9 +27,19 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
 
     @Override
     public DeliveryRecord createDeliveryRecord(DeliveryRecord record) {
+
         if (record.getDeliveryDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("in the future");
+            throw new IllegalArgumentException("Delivery date cannot be in the future");
         }
+
+        // 🔥 THIS IS THE KEY FIX
+        Long contractId = record.getContract().getId();
+
+        Contract contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new ResourceNotFoundException("Contract not found"));
+
+        record.setContract(contract);
+
         return deliveryRecordRepository.save(record);
     }
 
