@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-@Service   // 🔥 REQUIRED
+@Service
 public class DeliveryRecordServiceImpl implements DeliveryRecordService {
 
     @Autowired
@@ -21,24 +21,37 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
     @Autowired
     private ContractRepository contractRepository;
 
-    // Required for TestNG
+    // Required for TestNG & reflection-based tests
     public DeliveryRecordServiceImpl() {
     }
 
     @Override
     public DeliveryRecord createDeliveryRecord(DeliveryRecord record) {
 
+        if (record == null) {
+            throw new IllegalArgumentException("Delivery record is null");
+        }
+
+        if (record.getDeliveryDate() == null) {
+            throw new IllegalArgumentException("Delivery date is required");
+        }
+
         if (record.getDeliveryDate().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Delivery date cannot be in the future");
         }
 
-        // 🔥 THIS IS THE KEY FIX
+        // 🔥 CORE FIX: prevent detached entity issue
+        if (record.getContract() == null || record.getContract().getId() == null) {
+            throw new IllegalArgumentException("Contract ID is required");
+        }
+
         Long contractId = record.getContract().getId();
 
-        Contract contract = contractRepository.findById(contractId)
+        Contract managedContract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new ResourceNotFoundException("Contract not found"));
 
-        record.setContract(contract);
+        // Replace detached contract with managed entity
+        record.setContract(managedContract);
 
         return deliveryRecordRepository.save(record);
     }
