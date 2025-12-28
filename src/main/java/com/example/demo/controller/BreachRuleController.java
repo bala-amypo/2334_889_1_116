@@ -1,24 +1,24 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.BreachRule;
-import com.example.demo.service.BreachRuleService;
+import com.example.demo.entity.BreachReport;
+import com.example.demo.service.BreachReportService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/breach-rules")
-public class BreachRuleController {
+@RequestMapping("/api/reports")
+public class BreachReportController {
 
-    BreachRuleService breachRuleService;
+    BreachReportService breachReportService;
 
-    @PostMapping
-    public BreachRule create(@RequestBody BreachRule rule) {
-        return breachRuleService.createRule(rule);
+    @PostMapping("/generate/{contractId}")
+    public BreachReport generate(@PathVariable Long contractId) {
+        return breachReportService.generateReport(contractId);
     }
 
     @GetMapping
-    public List<BreachRule> list() {
-        return breachRuleService.getAllRules();
+    public List<BreachReport> list() {
+        return breachReportService.getAllReports();
     }
 }
