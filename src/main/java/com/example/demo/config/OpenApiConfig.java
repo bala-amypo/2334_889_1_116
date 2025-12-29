@@ -15,7 +15,7 @@ import java.util.List;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(title = "My API", version = "1.0"),
-        security = @SecurityRequirement(name = "bearerAuth") // ✅ APPLY SECURITY
+        security = @SecurityRequirement(name = "bearerAuth") 
 )
 @SecurityScheme(
         name = "bearerAuth",
